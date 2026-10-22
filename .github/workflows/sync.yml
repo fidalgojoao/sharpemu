@@ -1,0 +1,20 @@
+name: Sync fork
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"   # every 6 hours
+  workflow_dispatch:         # lets you run it manually from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync with upstream
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BRANCH=$(gh repo view ${{ github.repository }} --json defaultBranchRef -q .defaultBranchRef.name)
+          gh repo sync ${{ github.repository }} --branch "$BRANCH"
